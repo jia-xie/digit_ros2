@@ -7,7 +7,10 @@ endif()
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_srvs REQUIRED)
 
 # Set paths
 set(LIBRARY_PATH "${CMAKE_SOURCE_DIR}/thirdparty/api_AR/lib")
@@ -17,7 +20,6 @@ set(SRC_PATH "${CMAKE_SOURCE_DIR}/thirdparty/api_AR/src")
 # Include necessary directories
 include_directories(
     include
-    ${INCLUDE_PATH}
 )
 
 # Compile the low-level API into a static library
@@ -32,11 +34,17 @@ add_executable(DigitCommunicationNode src/digit_comm.cpp)
 target_link_libraries(DigitCommunicationNode AR_api ${LIBRARY_PATH}/libartl.a -lpthread)
 
 # Ensure rclcpp dependency is included
-ament_target_dependencies(DigitCommunicationNode rclcpp)
+ament_target_dependencies(DigitCommunicationNode rclcpp std_srvs)
 
 # Install the executable
 install (
     TARGETS DigitCommunicationNode
+    DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+    PROGRAMS
+        scripts/digit_json.py
     DESTINATION lib/${PROJECT_NAME}
 )
 

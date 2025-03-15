@@ -15,6 +15,14 @@ def generate_launch_description():
         parameters=[{'run_simulation': True}]
     )
 
+    digit_json_node = Node(
+        package="digit_hardware",
+        executable="digit_json.py",
+        name="digit_json_node",
+        output="screen"
+    )
+
     ld.add_action(digit_communication_node)
+    # ld.add_action(digit_json_node)
 
     return ld
