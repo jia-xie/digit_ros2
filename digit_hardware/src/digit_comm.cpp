@@ -43,7 +43,7 @@ void DigitCommunicationNode::WaitUntilConnected()
         }
         rclcpp::sleep_for(std::chrono::milliseconds(1000));
     }
-    command.apply_command = false;
+    command.apply_command = true;
     llapi_send_command(&command);
     llapi_get_limits();
     switch (run_simulation)
@@ -60,25 +60,49 @@ void DigitCommunicationNode::WaitUntilConnected()
 
 void DigitCommunicationNode::Test()
 {
-    // if (!llapi_connected()) {
-    //     RCLCPP_ERROR(this->get_logger(), "Low Level Connection lost");
-    // }
+    if (!llapi_connected()) {
+        RCLCPP_ERROR(this->get_logger(), "Low Level Connection lost");
+    }
+    for (int32_t i = 0; i < NUM_MOTORS; i++){
+
+        if (i == 4 || i ==5 || i == 10 || i == 11){
+            command.motors[i].damping = 5;
+        }
+        else if (i == 3 || i == 9){
+            command.motors[i].damping = 5;
+        }
+        else{
+            command.motors[i].damping = 5;
+            command.motors[i].damping = 5;
+        }
+
+        command.motors[i].torque = 10;   
+        command.motors[i].velocity = 0;
+
+    }
+
     command.fallback_opmode = Damping;
     command.apply_command = true;
+
     llapi_send_command(&command);
-    // if (llapi_get_observation(&observation))
-    // {
-    //     RCLCPP_INFO(this->get_logger(), "Received Observation: %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f",
-    //                 observation.motor.position[0], observation.motor.position[1], observation.motor.position[2],
-    //                 observation.motor.position[3], observation.motor.position[4], observation.motor.position[5],
-    //                 observation.motor.position[6], observation.motor.position[7], observation.motor.position[8],
-    //                 observation.motor.position[9], observation.motor.position[10], observation.motor.position[11],
-    //                 observation.motor.position[12], observation.motor.position[13], observation.motor.position[14]);
-    // }
-    // else
-    // {
-    //     RCLCPP_ERROR(this->get_logger(), "Failed to get observation");
-    // }
+    int receive_status = llapi_get_observation(&observation);
+    if (receive_status < 1)
+    {
+        RCLCPP_ERROR(this->get_logger(), " Error in receiving observation");
+    }
+    else if (receive_status) {
+        RCLCPP_INFO(this->get_logger(), "Received Observation: %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f",
+                    observation.motor.position[0], observation.motor.position[1], observation.motor.position[2],
+                    observation.motor.position[3], observation.motor.position[4], observation.motor.position[5],
+                    observation.motor.position[6], observation.motor.position[7], observation.motor.position[8],
+                    observation.motor.position[9], observation.motor.position[10], observation.motor.position[11],
+                    observation.motor.position[12], observation.motor.position[13], observation.motor.position[14]);
+    }
+    else
+    {
+        //no new data
+        RCLCPP_INFO(this->get_logger(), "No new data");
+    }
 }
 
 int main(int argc, char **argv)
@@ -89,8 +113,8 @@ int main(int argc, char **argv)
     digit_comm_node->WaitUntilConnected();
     while (rclcpp::ok())
     {
-        // digit_comm_node->Test();
-        rclcpp::sleep_for(std::chrono::milliseconds(100));
+        digit_comm_node->Test();
+        rclcpp::sleep_for(std::chrono::nanoseconds(100));
 
     }
     rclcpp::spin(digit_comm_node);

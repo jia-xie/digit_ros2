@@ -23,6 +23,6 @@ def generate_launch_description():
     )
 
     ld.add_action(digit_communication_node)
-    # ld.add_action(digit_json_node)
+    ld.add_action(digit_json_node)
 
     return ld
