@@ -32,7 +32,7 @@ void DigitCommunicationNode::RequestPrivilege()
 void DigitCommunicationNode::TestExample()
 {
     if (!llapi_connected()) {
-        // RCLCPP_ERROR(this->get_logger(), "Low Level Connection lost");
+        RCLCPP_DEBUG(this->get_logger(), "Low Level Connection lost");
     }
     for (int32_t i = 0; i < NUM_MOTORS; i++){
 
