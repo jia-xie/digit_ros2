@@ -17,8 +17,8 @@ public:
         llapi_free();
     }
 
-    void WaitUntilConnected();
-    void Test();
+    void RequestPrivilege();
+    void TestExample();
 
 private:
     llapi_command_t command;
@@ -28,7 +28,6 @@ private:
     bool run_simulation;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr privilege_client_;
 
-    void RequestPrivilege();
 };
 
 #endif // DIGIT_COMMUNICATION_NODE_HPP
